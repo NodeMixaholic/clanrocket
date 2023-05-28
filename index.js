@@ -43,6 +43,7 @@ client.on('messageCreate', async (message) => {
   }
   else if (command === 'setlevel') {
     let perms = message.member.permissions.toArray();
+    console.log(`${perms}`)
     if (!perms.includes("KICK_MEMBERS")) {
       message.channel.send('Only administrators can use this command.');
       return;
