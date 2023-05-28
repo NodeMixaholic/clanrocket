@@ -8,7 +8,8 @@ const client = new Client({
   ]
 });
 
-const db = require('quick.db');
+const { QuickDB } = require("quick.db");
+const db = new QuickDB();
 
 const xpPerMessage = 10; // XP earned per message
 const levelUpThreshold = 100; // XP required to level up
