@@ -57,7 +57,7 @@ client.on('messageCreate', async (message) => {
       message.channel.send('Invalid level. Please provide a valid number.');
       return;
     }
-
+    asyncSleep(3000)
     await db.set(`level_${targetUser.id}`, newLevel);
     message.channel.send(`Successfully set the level of ${targetUser} to ${newLevel}.`);
   }
