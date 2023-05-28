@@ -30,7 +30,7 @@ client.on('messageCreate', async (message) => {
 
   const args = message.content.replaceAll(prefix,"").split(/ +/);
   const command = args[0]
-  console.log(`Command ${command} ran!`)
+  //console.log(`Command ${command} ran!`)
   // Handle commands here
   if (command === 'ping') {
     message.channel.send('Pong!');
@@ -43,8 +43,8 @@ client.on('messageCreate', async (message) => {
   }
   else if (command === 'setlevel') {
     let perms = message.member.permissions.toArray();
-    console.log(`${perms}`)
-    if (!perms.includes("KICK_MEMBERS")) {
+    //console.log(`${perms}`)
+    if (!perms.includes("Administrator")) {
       message.channel.send('Only administrators can use this command.');
       return;
     }
