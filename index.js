@@ -1,4 +1,4 @@
-const { Permissions, Client, Intents, GatewayIntentBits } = require('discord.js');
+const { PermissionsBitField, Client, Intents, GatewayIntentBits } = require('discord.js');
 
 const client = new Client({ 
   intents: [
@@ -42,7 +42,7 @@ client.on('messageCreate', async (message) => {
     message.channel.send(`You are currently at level ${userLevel} with ${userXP} XP.`);
   }
   else if (command === 'setlevel') {
-    if (!message.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    if (!message.member.permissions.has(PermissionsBitField.FLAGS.ADMINISTRATOR)) {
       message.channel.send('Only administrators can use this command.');
       return;
     }
