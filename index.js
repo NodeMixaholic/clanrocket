@@ -97,8 +97,7 @@ async function updateXP() {
     }
   }
 
-  asyncSleep(15000)
-  updateXP()
+  setTimeout(updateXP, 15000)
 }
 
 
