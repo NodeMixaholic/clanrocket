@@ -25,7 +25,7 @@ client.on('message', async (message) => {
 
   const args = message.content.replaceAll(prefix,"").split(/ +/);
   const command = args[0]
-
+  console.log(`Command ${command} ran!`)
   // Handle commands here
   if (command === 'ping') {
     message.channel.send('Pong!');
