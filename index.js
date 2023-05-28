@@ -31,8 +31,8 @@ client.on('messageCreate', async (message) => {
     message.channel.send('Pong!');
   }
   else if (command === 'level') {
-    const userXP = db.get(`xp_${message.author.id}`) || 0;
-    const userLevel = db.get(`level_${message.author.id}`) || 0;
+    const userXP = await db.get(`xp_${message.author.id}`) || 0;
+    const userLevel = await db.get(`level_${message.author.id}`) || 0;
     message.channel.send(`You are currently at level ${userLevel} with ${userXP} XP.`);
   }
   else if (command === 'setlevel') {
@@ -53,7 +53,7 @@ client.on('messageCreate', async (message) => {
       return;
     }
 
-    db.set(`level_${targetUser.id}`, newLevel);
+    await db.set(`level_${targetUser.id}`, newLevel);
     message.channel.send(`Successfully set the level of ${targetUser} to ${newLevel}.`);
   }
   else if (command === 'help') {
