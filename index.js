@@ -20,7 +20,7 @@ client.on('ready', () => {
   updateXP(); // Run the XP update function when the bot is ready
 });
 
-client.on('message', async (message) => {
+client.on('messageCreate', async (message) => {
   if (message.author.bot || !message.content.startsWith(prefix)) return;
 
   const args = message.content.replaceAll(prefix,"").split(/ +/);
