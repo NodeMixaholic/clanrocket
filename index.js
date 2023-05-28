@@ -1,11 +1,11 @@
-const Discord = require('discord.js');
-const { Client, Intents } = Discord;
-const client = new Discord.Client({
+const { Client, Intents } = require('discord.js');
+const client = new Client({ 
   intents: [
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MEMBERS,
     Intents.FLAGS.GUILD_MESSAGES
-  ]});
+  ]
+});
 const db = require('quick.db');
 
 const xpPerMessage = 10; // XP earned per message
