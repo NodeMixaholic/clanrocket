@@ -1,10 +1,12 @@
 const { Client, Intents } = require('discord.js');
-const client = new Client({ 
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.GUILD_MESSAGES
-  ]
+const client = new Discord.Client({
+  ws: { 
+    intents: [
+      'GUILDS',
+      'GUILD_MEMBERS',
+      'GUILD_MESSAGES'
+    ]
+  }
 });
 const db = require('quick.db');
 
