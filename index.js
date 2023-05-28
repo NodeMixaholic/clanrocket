@@ -20,6 +20,10 @@ client.on('ready', () => {
   updateXP(); // Run the XP update function when the bot is ready
 });
 
+function asyncSleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 client.on('messageCreate', async (message) => {
   if (message.author.bot || !message.content.startsWith(prefix)) return;
 
@@ -33,6 +37,7 @@ client.on('messageCreate', async (message) => {
   else if (command === 'level') {
     const userXP = await db.get(`xp_${message.author.id}`) || 0;
     const userLevel = await db.get(`level_${message.author.id}`) || 0;
+    asyncSleep(3000)
     message.channel.send(`You are currently at level ${userLevel} with ${userXP} XP.`);
   }
   else if (command === 'setlevel') {
@@ -92,8 +97,10 @@ async function updateXP() {
     }
   }
 
-  setTimeout(updateXP, 60000); // Wait for 1 minute before updating XP again
+  asyncSleep(15000)
+  updateXP()
 }
+
 
 // Retrieve bot token from CLI argument
 const botToken = process.argv[2];
