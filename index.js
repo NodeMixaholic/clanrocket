@@ -72,33 +72,27 @@ client.on('message', async (message) => {
 });
 
 async function updateXP() {
-  while (true) {
-    const guilds = client.guilds.cache;
-    for (const guild of guilds) {
-      const members = guild[1].members.cache;
-      for (const member of members) {
-        const userXP = db.get(`xp_${member[0]}`) || 0;
-        const userLevel = db.get(`level_${member[0]}`) || 0;
+  const guilds = client.guilds.cache;
+  for (const guild of guilds) {
+    const members = guild[1].members.cache;
+    for (const member of members) {
+      const userXP = db.get(`xp_${member[0]}`) || 0;
+      const userLevel = db.get(`level_${member[0]}`) || 0;
 
-        const newXp = userXP + xpPerMessage;
-        if (newXp >= levelUpThreshold) {
-          db.set(`xp_${member[0]}`, newXp - levelUpThreshold);
-          db.set(`level_${member[0]}`, userLevel + 1);
-          const user = await guild[1].members.fetch(member[0]);
-          user.send(`Congratulations ${user}, you leveled up to level ${userLevel + 1}!`);
-        }
-        else {
-          db.set(`xp_${member[0]}`, newXp);
-        }
+      const newXp = userXP + xpPerMessage;
+      if (newXp >= levelUpThreshold) {
+        db.set(`xp_${member[0]}`, newXp - levelUpThreshold);
+        db.set(`level_${member[0]}`, userLevel + 1);
+        const user = await guild[1].members.fetch(member[0]);
+        user.send(`Congratulations ${user}, you leveled up to level ${userLevel + 1}!`);
+      }
+      else {
+        db.set(`xp_${member[0]}`, newXp);
       }
     }
-
-    await sleep(60000); // Wait for 1 minute before updating XP again
   }
-}
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  setTimeout(updateXP, 60000); // Wait for 1 minute before updating XP again
 }
 
 // Retrieve bot token from CLI argument
