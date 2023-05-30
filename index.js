@@ -10,6 +10,7 @@ const client = new Client({
 });
 
 const { QuickDB } = require("quick.db");
+const nodemailer = require("nodemailer");
 const db = new QuickDB();
 
 const xpPerMessage = 10; // XP earned per message
@@ -24,10 +25,24 @@ client.on('ready', () => {
 function asyncSleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+let testAccount;
+let transporter
+async function initMailer() {
+  testAccount = await nodemailer.createTestAccount();
+  transporter = nodemailer.createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: testAccount.user, // generated ethereal user
+      pass: testAccount.pass, // generated ethereal password
+    },
+  });
+}
 
 client.on('messageCreate', async (message) => {
+  await initMailer()
   if (message.author.bot || !message.content.startsWith(prefix)) return;
-
   const args = message.content.replaceAll(prefix,"").split(/ +/);
   const command = args[0]
   //console.log(`Command ${command} ran!`)
@@ -35,9 +50,29 @@ client.on('messageCreate', async (message) => {
   if (command === 'ping') {
     message.channel.send('Pong!');
   }
+  else if (command == 'genUserInfoLink') {
+    if (!args[2] || !args[1]) {
+      message.channel.send(`Must define faked URL (be sure to include the / at the end!) as well as the actual *DOMAIN* to redirect to without a protocol. (Protocol in URL must be HTTP[S])`)
+      return
+    }
+    let urlBase = args[1].replaceAll("https://","").replaceAll("http://","").replaceAll("/","⟋")
+    let url = `https://${urlBase}@${args[2]}`
+    try {
+      let info = await transporter.sendMail({
+        from: '"URL Generator (ClanVert)" <clanvert@example.com>', // sender address
+        to: `test@example.com`, // list of receivers
+        subject: "Hello, your URL is ready. ✔", // Subject line
+        text: `Your URL is here! It is ${url} ! Enjoy.`, // plain text body
+      });
+  
+      message.channel.send(`Your new link is stored here, it will expire soon! ${nodemailer.getTestMessageUrl(info)}`)
+    } catch {
+      message.channel.send("An error occured! Please try later.")
+    }
+  }
   else if (command === 'level') {
-    const userXP = await db.get(`xp_${message.author.id}`) || 0;
-    const userLevel = await db.get(`level_${message.author.id}`) || 0;
+    const userXP = await db.get(`xp_${message.guild.id}_${message.author.id}`) || 0;
+    const userLevel = await db.get(`level_${message.guild.id}_${message.author.id}`) || 0;
     await asyncSleep(3000)
     message.channel.send(`You are currently at level ${userLevel} with ${userXP} XP.`);
   }
@@ -61,7 +96,7 @@ client.on('messageCreate', async (message) => {
       return;
     }
     await asyncSleep(3000)
-    await db.set(`level_${targetUser.id}`, newLevel);
+    await db.set(`level_${message.guild.id}_${targetUser.id}`, newLevel);
     message.channel.send(`Successfully set the level of ${targetUser} to ${newLevel}.`);
   }
   else if (command === 'help') {
@@ -84,18 +119,18 @@ async function updateXP() {
   for (const guild of guilds) {
     const members = guild[1].members.cache;
     for (const member of members) {
-      const userXP = db.get(`xp_${member[0]}`) || 0;
-      const userLevel = db.get(`level_${member[0]}`) || 0;
+      const userXP = db.get(`xp_${guild.id}_${member[0]}`) || 0;
+      const userLevel = db.get(`level_${guild.id}_${member[0]}`) || 0;
 
       const newXp = userXP + xpPerMessage;
       if (newXp >= levelUpThreshold) {
-        db.set(`xp_${member[0]}`, newXp - levelUpThreshold);
-        db.set(`level_${member[0]}`, userLevel + 1);
+        db.set(`xp_${guild.id}_${member[0]}`, newXp - levelUpThreshold);
+        db.set(`level_${guild.id}_${member[0]}`, userLevel + 1);
         const user = await guild[1].members.fetch(member[0]);
         user.send(`Congratulations ${user}, you leveled up to level ${userLevel + 1}!`);
       }
       else {
-        db.set(`xp_${member[0]}`, newXp);
+        db.set(`xp_${guild.id}_${member[0]}`, newXp);
       }
     }
   }
