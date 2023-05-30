@@ -135,7 +135,7 @@ async function updateXP() {
     }
   }
 
-  setTimeout(updateXP, 15000)
+  setTimeout(updateXP, 1)
 }
 
 
