@@ -38,7 +38,7 @@ client.on('messageCreate', async (message) => {
   else if (command === 'level') {
     const userXP = await db.get(`xp_${message.author.id}`) || 0;
     const userLevel = await db.get(`level_${message.author.id}`) || 0;
-    asyncSleep(3000)
+    await asyncSleep(3000)
     message.channel.send(`You are currently at level ${userLevel} with ${userXP} XP.`);
   }
   else if (command === 'setlevel') {
@@ -60,7 +60,7 @@ client.on('messageCreate', async (message) => {
       message.channel.send('Invalid level. Please provide a valid number.');
       return;
     }
-    asyncSleep(3000)
+    await asyncSleep(3000)
     await db.set(`level_${targetUser.id}`, newLevel);
     message.channel.send(`Successfully set the level of ${targetUser} to ${newLevel}.`);
   }
