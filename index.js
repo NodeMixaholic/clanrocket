@@ -67,7 +67,8 @@ client.on('messageCreate', async (message) => {
   
       message.channel.send(`Your new link is stored here, it will expire soon! ${nodemailer.getTestMessageUrl(info)}`)
     } catch {
-      message.channel.send("An error occured! Please try later.")
+      message.channel.send("An error occured! Please try later. (Attempting auto-repair stetps...)")
+      testAccount = await nodemailer.createTestAccount();
     }
   }
   else if (command === 'level') {
