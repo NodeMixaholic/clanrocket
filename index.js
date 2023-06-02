@@ -82,7 +82,7 @@ client.on('messageCreate', async (message) => {
 	} catch {
 		console.log("cant understand!")
 	}
-  if (!message.author.bot || !message.content.startsWith(prefix)) {
+  if (!message.author.bot && !message.content.startsWith(prefix)) {
     let userXP = await db.get(`xp_${message.guild.id}_${message.author.id}`) || 0;
     let userLevel = await db.get(`level_${message.guild.id}_${message.author.id}`) || 0;
     console.log(`${userXP} ${userLevel}`); // Removed "await" as console.log does not return a Promise
