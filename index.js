@@ -11,6 +11,16 @@ const client = new Client({
 
 const { QuickDB } = require("quick.db");
 const nodemailer = require("nodemailer");
+const Perspective = require("perspective-api-client")
+
+const perspectiveKey = process.argv[3];
+
+if (!perspectiveKey) {
+  console.error("Can not find perspective key as command line arg.")
+  process.exit(1);
+}
+
+let perspe = new Perspective({apiKey: perspectiveKey});
 const db = new QuickDB();
 
 const xpPerMessage = 10; // XP earned per message
@@ -42,7 +52,30 @@ async function initMailer() {
 
 client.on('messageCreate', async (message) => {
   await initMailer()
-  if (message.author.bot || !message.content.startsWith(prefix)) return;
+  //The moderation part
+  let perms = message.member.permissions.toArray();
+  try {
+    let text = `${message.content}`
+    //console.log(text)
+		let result = await perspe.analyze(text)
+		let stringify = JSON.stringify(result)
+		let obj = JSON.parse(stringify);
+		console.log(stringify);
+		if (perms.includes("Administrator")) {
+			console.log("ADMIN BYPASS")
+		} else {
+		if (obj.attributeScores.TOXICITY.summaryScore.value > .8571) {
+			if (!message.author.bot) {
+        await message.reply("Please don't be toxic. :-)");
+        message.delete();
+      }
+		}
+		}
+	} catch {
+		console.log("cant understand!")
+	}
+  //NOTE: PUT CODE THAT'S NOT RELATED TO COMMANDS OR THE BOT SHOULDNT IGNORE ABOVE THIS LINE.
+  if (message.author.bot || !message.content.startsWith(prefix)) { return }
   const args = message.content.replaceAll(prefix,"").split(/ +/);
   const command = args[0]
   //console.log(`Command ${command} ran!`)
@@ -78,7 +111,7 @@ client.on('messageCreate', async (message) => {
     message.channel.send(`You are currently at level ${userLevel} with ${userXP} XP.`);
   }
   else if (command === 'setlevel') {
-    let perms = message.member.permissions.toArray();
+    
     //console.log(`${perms}`)
     if (!perms.includes("Administrator")) {
       message.channel.send('Only administrators can use this command.');
@@ -113,6 +146,7 @@ client.on('messageCreate', async (message) => {
     // Unknown command
     message.channel.send('Unknown command. Use `c!help` to see the available commands.');
   }
+
 });
 
 async function updateXP() {

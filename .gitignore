@@ -1,3 +1,5 @@
 node_modules/
 .env
 .sqlite
+start.sh
+start.bat
