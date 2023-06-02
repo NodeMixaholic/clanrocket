@@ -65,19 +65,20 @@ client.on('messageCreate', async (message) => {
   try {
     let text = `${message.content}`
     //console.log(text)
-		let result = await perspe.analyze(text)
+		let result = await perspe.analyze(text, {"attributes": ["TOXICITY", "INSULT", "INCOHERENT", "SPAM", "THREAT"]})
 		let stringify = JSON.stringify(result)
 		let obj = JSON.parse(stringify);
 		console.log(stringify);
-		if (perms.includes("Administrator")) {
-			console.log("ADMIN BYPASS")
+		if (perms.includes("Administrator" || message.author.bot)) {
+			console.log("ADMIN/BOT BYPASS")
 		} else {
-		if (obj.attributeScores.TOXICITY.summaryScore.value > .8571) {
-			if (!message.author.bot) {
+		if (obj.attributeScores.TOXICITY.summaryScore.value > .8571 || obj.attributeScores.INSULT.summaryScore.value > .8571 || obj.attributeScores.THREAT.summaryScore.value) {
         await message.reply("Please don't be toxic. :-)");
         message.delete();
-      }
-		}
+		} else if (obj.attributeScores.INCOHERENT.summaryScore.value > .8571 || obj.attributeScores.SPAM.summaryScore.value > .8571) {
+      await message.reply("Please no spam, and please speak normal-ish english. :-)");
+        message.delete();
+    }
 		}
 	} catch {
 		console.log("cant understand!")
@@ -93,7 +94,7 @@ client.on('messageCreate', async (message) => {
       db.set(`level_${message.guild.id}_${message.author.id}`, userLevel + 1);
       let guild = message.guild; // Added missing "let guild = message.guild"
       let user = await guild.members.fetch(message.author.id);
-      user.send(`Congratulations ${user}, you leveled up to level ${userLevel + 1}!`); // Fixed the variable usage
+      user.send(`Congratulations ${user}, you leveled up to level ${userLevel + 1} in ${message.guild.name}!`); // Fixed the variable usage
     }
     else {
       db.set(`xp_${message.guild.id}_${message.author.id}`, newXp);
