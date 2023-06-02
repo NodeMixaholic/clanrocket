@@ -1,9 +1,35 @@
 {
+  "scripts": {
+    "make": "npx electron-packager --platform linux --arch x64,arm64 ."
+  },
   "dependencies": {
     "better-sqlite3": "^8.4.0",
     "discord.js": "^14.11.0",
+    "electron": "^25.0.1",
+    "electron-forge": "^5.2.4",
+    "electron-packager": "^17.1.1",
     "nodemailer": "^6.9.3",
     "perspective-api-client": "^3.1.0",
     "quick.db": "^9.1.6"
-  }
+  },
+  "name": "clanvert2",
+  "description": "ClanVert private Git repo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nodemixaholic/clanvert-git.git"
+  },
+  "keywords": [
+    "discord",
+    "moderation",
+    "xp"
+  ],
+  "author": "Clanvert",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/nodemixaholic/clanvert-git/issues"
+  },
+  "homepage": "https://github.com/nodemixaholic/clanvert-git#readme"
 }

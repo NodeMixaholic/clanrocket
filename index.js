@@ -10,14 +10,21 @@ const client = new Client({
 });
 
 const { QuickDB } = require("quick.db");
+const electron = require("electron")
 const nodemailer = require("nodemailer");
 const Perspective = require("perspective-api-client")
 
-const perspectiveKey = process.argv[3];
+let testingMode = true
+
+let perspectiveKey = process.argv[3];
 
 if (!perspectiveKey) {
-  console.error("Can not find perspective key as command line arg.")
-  process.exit(1);
+  perspectiveKey = process.argv[2];
+  testingMode = false
+  if (!perspectiveKey) {
+    console.error("Can not find perspective key as command line arg.")
+    process.exit(1);
+  }
 }
 
 let perspe = new Perspective({apiKey: perspectiveKey});
@@ -175,12 +182,16 @@ async function updateXP() {
 
 
 // Retrieve bot token from CLI argument
-const botToken = process.argv[2];
+let botToken = process.argv[2];
 
 // Check if the bot token is provided
 if (!botToken) {
-  console.error('Bot token not provided as a command-line argument!');
-  process.exit(1);
+  botToken = process.argv[1];
+  testingMode = false
+  if (!botToken) {
+    console.error('Bot token not provided as a command-line argument!');
+    process.exit(1);
+  }
 }
 
 // Log in with the bot token
