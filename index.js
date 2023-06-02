@@ -36,7 +36,6 @@ const prefix = 'c!'; // Bot command prefix
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
-  updateXP(); // Run the XP update function when the bot is ready
 });
 
 function asyncSleep(ms) {
@@ -56,6 +55,8 @@ async function initMailer() {
     },
   });
 }
+
+
 
 client.on('messageCreate', async (message) => {
   await initMailer()
@@ -81,6 +82,24 @@ client.on('messageCreate', async (message) => {
 	} catch {
 		console.log("cant understand!")
 	}
+  if (!message.author.bot || !message.content.startsWith(prefix)) {
+    let userXP = await db.get(`xp_${message.guild.id}_${message.author.id}`) || 0;
+    let userLevel = await db.get(`level_${message.guild.id}_${message.author.id}`) || 0;
+    console.log(`${userXP} ${userLevel}`); // Removed "await" as console.log does not return a Promise
+    
+    let newXp = Number(userXP + xpPerMessage);
+    if (newXp >= levelUpThreshold) {
+      db.set(`xp_${message.guild.id}_${message.author.id}`, newXp - levelUpThreshold);
+      db.set(`level_${message.guild.id}_${message.author.id}`, userLevel + 1);
+      let guild = message.guild; // Added missing "let guild = message.guild"
+      let user = await guild.members.fetch(message.author.id);
+      user.send(`Congratulations ${user}, you leveled up to level ${userLevel + 1}!`); // Fixed the variable usage
+    }
+    else {
+      db.set(`xp_${message.guild.id}_${message.author.id}`, newXp);
+    }
+  }
+
   //NOTE: PUT CODE THAT'S NOT RELATED TO COMMANDS OR THE BOT SHOULDNT IGNORE ABOVE THIS LINE.
   if (message.author.bot || !message.content.startsWith(prefix)) { return }
   const args = message.content.replaceAll(prefix,"").split(/ +/);
@@ -131,7 +150,7 @@ client.on('messageCreate', async (message) => {
       return;
     }
 
-    const newLevel = parseInt(args[0]);
+    const newLevel = Number(parseInt(args[0]));
     if (isNaN(newLevel)) {
       message.channel.send('Invalid level. Please provide a valid number.');
       return;
@@ -139,12 +158,35 @@ client.on('messageCreate', async (message) => {
     await asyncSleep(3000)
     await db.set(`level_${message.guild.id}_${targetUser.id}`, newLevel);
     message.channel.send(`Successfully set the level of ${targetUser} to ${newLevel}.`);
+    } else if (command === 'setxp') {
+    
+      //console.log(`${perms}`)
+      if (!perms.includes("Administrator")) {
+        message.channel.send('Only administrators can use this command.');
+        return;
+      }
+  
+      const targetUser = message.mentions.users.first();
+      if (!targetUser) {
+        message.channel.send('Please mention a user to set their level.');
+        return;
+      }
+  
+      const newxp = Number(parseInt(args[0]));
+      if (isNaN(newxp)) {
+        message.channel.send('Invalid xp. Please provide a valid number.');
+        return;
+      }
+      await asyncSleep(3000)
+      await db.set(`xp_${message.guild.id}_${targetUser.id}`, newxp);
+      message.channel.send(`Successfully set the level of ${targetUser} to ${newxp}.`);
   }
   else if (command === 'help') {
     const helpMessage = `**Available Commands**
     \`c!ping\` - Ping the bot.
     \`c!level\` - Get your current level and XP.
     \`c!setlevel @user level\` - Set the level of a user (Admin only).
+    \`c!setxp @user xp\` - Set the xp of a user (Admin only).
     \`c!help\` - Get a list of available commands.`;
 
     message.channel.send(helpMessage);
@@ -155,31 +197,6 @@ client.on('messageCreate', async (message) => {
   }
 
 });
-
-async function updateXP() {
-  const guilds = client.guilds.cache;
-  for (const guild of guilds) {
-    const members = guild[1].members.cache;
-    for (const member of members) {
-      const userXP = db.get(`xp_${guild.id}_${member[0]}`) || 0;
-      const userLevel = db.get(`level_${guild.id}_${member[0]}`) || 0;
-
-      const newXp = userXP + xpPerMessage;
-      if (newXp >= levelUpThreshold) {
-        db.set(`xp_${guild.id}_${member[0]}`, newXp - levelUpThreshold);
-        db.set(`level_${guild.id}_${member[0]}`, userLevel + 1);
-        const user = await guild[1].members.fetch(member[0]);
-        user.send(`Congratulations ${user}, you leveled up to level ${userLevel + 1}!`);
-      }
-      else {
-        db.set(`xp_${guild.id}_${member[0]}`, newXp);
-      }
-    }
-  }
-
-  setTimeout(updateXP, 1)
-}
-
 
 // Retrieve bot token from CLI argument
 let botToken = process.argv[2];
