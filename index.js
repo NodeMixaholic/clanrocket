@@ -57,10 +57,8 @@ async function initMailer() {
 }
 
 
-
-client.on('messageCreate', async (message) => {
-  await initMailer()
-  //The moderation part
+//Init moderation.
+async function moderate(message) {
   let perms = message.member.permissions.toArray();
   try {
     let text = `${message.content}`
@@ -83,6 +81,13 @@ client.on('messageCreate', async (message) => {
 	} catch {
 		console.log("cant understand!")
 	}
+}
+
+client.on('messageCreate', async (message) => {
+  await initMailer()
+  //The moderation part
+  await moderate(message)
+
   if (!message.author.bot && !message.content.startsWith(prefix)) {
     let userXP = await db.get(`xp_${message.guild.id}_${message.author.id}`) || 0;
     let userLevel = await db.get(`level_${message.guild.id}_${message.author.id}`) || 0;
@@ -198,6 +203,10 @@ client.on('messageCreate', async (message) => {
   }
 
 });
+
+client.on('messageUpdate', async (oldMessage, newMessage) => {
+  await moderate(newMessage)
+})
 
 // Retrieve bot token from CLI argument
 let botToken = process.argv[2];
