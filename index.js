@@ -71,13 +71,15 @@ async function moderate(message) {
 			console.log("ADMIN/BOT BYPASS")
 		} else {
 		if (obj.attributeScores.TOXICITY.summaryScore.value > .8571 || obj.attributeScores.INSULT.summaryScore.value > .8571 || obj.attributeScores.THREAT.summaryScore.value > .8571) {
+        console.log("Reply1")
         await message.reply("Please don't be toxic. :-)");
+        console.log("Del1")
         message.delete();
 		} else if (obj.attributeScores.INCOHERENT.summaryScore.value > .9321 || obj.attributeScores.SPAM.summaryScore.value > .8571) {
-      if (text.toLowerCase().includes("roblox")) {
-        return
-      } else {
+      if (!text.toLowerCase().includes("roblox")) {
+        console.log("Reply2")
         await message.reply("Please no spam, and please speak normal-ish english. :-)");
+        console.log("Del2")
         message.delete();
       }
     }
@@ -88,6 +90,7 @@ async function moderate(message) {
 }
 
 client.on('messageCreate', async (message) => {
+  let perms = message.member.permissions.toArray();
   await initMailer()
   //The moderation part
   await moderate(message)
@@ -160,7 +163,8 @@ client.on('messageCreate', async (message) => {
       return;
     }
 
-    const newLevel = Number(parseInt(args[0]));
+    const newLevel = Number(parseInt(args[2]));
+    console.log(newLevel)
     if (isNaN(newLevel)) {
       message.channel.send('Invalid level. Please provide a valid number.');
       return;
@@ -181,8 +185,9 @@ client.on('messageCreate', async (message) => {
         message.channel.send('Please mention a user to set their level.');
         return;
       }
-  
-      const newxp = Number(parseInt(args[0]));
+
+      const newxp = Number(parseInt(args[2]));
+      console.log(newxp)
       if (isNaN(newxp)) {
         message.channel.send('Invalid xp. Please provide a valid number.');
         return;
