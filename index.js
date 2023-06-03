@@ -72,7 +72,7 @@ client.on('messageCreate', async (message) => {
 		if (perms.includes("Administrator" || message.author.bot)) {
 			console.log("ADMIN/BOT BYPASS")
 		} else {
-		if (obj.attributeScores.TOXICITY.summaryScore.value > .8571 || obj.attributeScores.INSULT.summaryScore.value > .8571 || obj.attributeScores.THREAT.summaryScore.value) {
+		if (obj.attributeScores.TOXICITY.summaryScore.value > .8571 || obj.attributeScores.INSULT.summaryScore.value > .8571 || obj.attributeScores.THREAT.summaryScore.value > .8571) {
         await message.reply("Please don't be toxic. :-)");
         message.delete();
 		} else if (obj.attributeScores.INCOHERENT.summaryScore.value > .8571 || obj.attributeScores.SPAM.summaryScore.value > .8571) {
