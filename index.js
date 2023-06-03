@@ -73,9 +73,13 @@ async function moderate(message) {
 		if (obj.attributeScores.TOXICITY.summaryScore.value > .8571 || obj.attributeScores.INSULT.summaryScore.value > .8571 || obj.attributeScores.THREAT.summaryScore.value > .8571) {
         await message.reply("Please don't be toxic. :-)");
         message.delete();
-		} else if (obj.attributeScores.INCOHERENT.summaryScore.value > .8571 || obj.attributeScores.SPAM.summaryScore.value > .8571) {
-      await message.reply("Please no spam, and please speak normal-ish english. :-)");
+		} else if (obj.attributeScores.INCOHERENT.summaryScore.value > .9321 || obj.attributeScores.SPAM.summaryScore.value > .8571) {
+      if (text.toLowerCase().includes("roblox")) {
+        return
+      } else {
+        await message.reply("Please no spam, and please speak normal-ish english. :-)");
         message.delete();
+      }
     }
 		}
 	} catch {
