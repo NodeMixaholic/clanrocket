@@ -131,7 +131,7 @@ client.on('messageCreate', async (message) => {
     let url = `https://${urlBase}@${args[2]}`
     try {
       let info = await transporter.sendMail({
-        from: '"URL Generator (ClanVert)" <clanvert@example.com>', // sender address
+        from: '"URL Generator (ClanRocket)" <clanvertsux@example.com>', // sender address
         to: `test@example.com`, // list of receivers
         subject: "Hello, your URL is ready. ✔", // Subject line
         text: `Your URL is here! It is ${url} ! Enjoy.`, // plain text body
