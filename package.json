@@ -12,8 +12,8 @@
     "perspective-api-client": "^3.1.0",
     "quick.db": "^9.1.6"
   },
-  "name": "clanvert2",
-  "description": "ClanVert private Git repo",
+  "name": "clanrocket",
+  "description": "ClanVert. Open.",
   "version": "1.0.0",
   "main": "index.js",
   "devDependencies": {},
@@ -26,8 +26,8 @@
     "moderation",
     "xp"
   ],
-  "author": "Clanvert",
-  "license": "UNLICENSED",
+  "author": "Samuel Lord",
+  "license": "GPL",
   "bugs": {
     "url": "https://github.com/nodemixaholic/clanvert-git/issues"
   },
